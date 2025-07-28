@@ -27,7 +27,7 @@ export default function GroupsPage() {
   }
 
   const handleJoinTelegram = () => {
-    window.open("https://t.me/paygonaijaupdate")
+    window.open("https://t.me/realtechrt")
   }
 
   if (!userData) {
