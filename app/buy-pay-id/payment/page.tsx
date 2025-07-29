@@ -101,7 +101,7 @@ export default function PaymentPage() {
               <p className="text-gray-700 mb-1 text-sm flex items-center gap-1">
                 <span>🏦</span> Bank Name
               </p>
-              <p className="font-bold">VDF MFB</p>
+              <p className="font-bold">VFD MFB</p>
             </div>
 
             <div>
