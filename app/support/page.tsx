@@ -27,7 +27,7 @@ export default function SupportPage() {
 
   const handleWhatsAppSupport = () => {
     // Create WhatsApp URL with phone number and pre-filled message
-    const phoneNumber = "2349132579513" // Remove the + as it's added in the URL format
+    const phoneNumber = "19036318126" // Remove the + as it's added in the URL format
     const message = encodeURIComponent("hello i contacted for help from Paygo app")
     const whatsappUrl = `https://wa.me/${phoneNumber}?text=${message}`
 
