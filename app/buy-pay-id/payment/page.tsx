@@ -114,7 +114,7 @@ export default function PaymentPage() {
 
           <div className="p-3 border-t border-gray-300">
             <p className="mb-3 text-sm">
-              Kindly proceed with the payment for your PAY ID. Complete the bank transfer to activate your PAY ID.
+              Kindly proceed with the payment for your PAY ID. Complete the bank transfer to receive your PAY ID.
             </p>
 
             <button
