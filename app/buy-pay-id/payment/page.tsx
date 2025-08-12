@@ -10,7 +10,7 @@ export default function PaymentPage() {
   const [formData, setFormData] = useState<any>(null)
   const [copiedAmount, setCopiedAmount] = useState(false)
   const [copiedAccount, setCopiedAccount] = useState(false)
-  const [showOpayWarning, setShowOpayWarning] = useState(true) // Show modal on load
+  const [showOpayWarning, setShowOpayWarning] = useState(true) // modal visible on load
 
   useEffect(() => {
     const storedFormData = localStorage.getItem("paygo-pay-id-form")
@@ -46,10 +46,15 @@ export default function PaymentPage() {
       {/* OPay Warning Modal */}
       {showOpayWarning && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white w-80 p-6 rounded-lg shadow-lg text-center">
-            {/* Logo */}
+          <div className="bg-white w-80 p-6 rounded-lg shadow-lg text-center border-t-4 border-[#00C4A7]">
+            {/* Centered Logo */}
             <div className="flex justify-center mb-3">
-              <Image src="/opay-logo.png" alt="PayGo Logo" width={60} height={60} />
+              <Image
+                src="/paygo-logo.png" // make sure this file is in /public
+                alt="PayGo Logo"
+                width={70}
+                height={70}
+              />
             </div>
             <h2 className="text-lg font-bold text-[#00C4A7] mb-2">Important Payment Notice</h2>
             <p className="text-sm text-gray-700 mb-4">
@@ -60,7 +65,7 @@ export default function PaymentPage() {
             </p>
             <button
               onClick={() => setShowOpayWarning(false)}
-              className="w-full bg-[#00C4A7] text-white py-2 rounded hover:bg-[#00b39b]"
+              className="w-full bg-[#00C4A7] text-white py-2 rounded hover:bg-[#00b39b] font-medium"
             >
               I Understand
             </button>
