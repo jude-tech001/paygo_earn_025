@@ -58,7 +58,6 @@ export default function PaymentPage() {
           role="dialog"
         >
           <div className="w-11/12 max-w-sm rounded-2xl bg-white p-6 shadow-xl transform animate-scaleUp">
-            
             {/* Title */}
             <h2 className="mb-3 text-center text-lg font-extrabold text-[#1a237e]">
               Opay Service Down
@@ -72,15 +71,4 @@ export default function PaymentPage() {
             </p>
 
             <button
-              onClick={closeWarning}
-              className="w-full rounded-full bg-[#1a237e] py-2.5 text-center font-medium text-white hover:bg-[#0f175c] active:scale-[0.99] transition"
-            >
-              I Understand
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Header */}
-      <div className="flex items-center justify-between bg-gray-300 p-4">
-        <h1 className="text-lg font
+              onClick={closeWarning
