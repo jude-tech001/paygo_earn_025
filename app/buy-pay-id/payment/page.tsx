@@ -3,22 +3,26 @@
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import Image from "next/image"
 
 export default function PaymentPage() {
   const router = useRouter()
   const [formData, setFormData] = useState<any>(null)
   const [copiedAmount, setCopiedAmount] = useState(false)
   const [copiedAccount, setCopiedAccount] = useState(false)
-  const [showOpayWarning, setShowOpayWarning] = useState(true) // modal visible on load
+  const [showOpayWarning, setShowOpayWarning] = useState(false) // will be decided in useEffect
 
   useEffect(() => {
+    // load form data
     const storedFormData = localStorage.getItem("paygo-pay-id-form")
     if (!storedFormData) {
       router.push("/buy-pay-id")
       return
     }
     setFormData(JSON.parse(storedFormData))
+
+    // show the warning only if user hasn't acknowledged it yet
+    const acknowledged = localStorage.getItem("paygo-opay-warning-ack") === "1"
+    setShowOpayWarning(!acknowledged)
   }, [router])
 
   const handleCopyAmount = () => {
@@ -37,6 +41,11 @@ export default function PaymentPage() {
     router.push("/buy-pay-id/confirming-payment")
   }
 
+  const closeWarning = () => {
+    localStorage.setItem("paygo-opay-warning-ack", "1")
+    setShowOpayWarning(false)
+  }
+
   if (!formData) {
     return <div className="p-6 text-center">Loading...</div>
   }
@@ -45,27 +54,36 @@ export default function PaymentPage() {
     <div className="min-h-screen flex flex-col bg-white relative">
       {/* OPay Warning Modal */}
       {showOpayWarning && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white w-80 p-6 rounded-lg shadow-lg text-center border-t-4 border-[#00C4A7]">
-            {/* Centered Logo */}
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+          aria-modal="true"
+          role="dialog"
+        >
+          <div className="w-11/12 max-w-sm rounded-2xl bg-white p-6 shadow-xl">
+            {/* Logo centered (served from /public) */}
             <div className="flex justify-center mb-3">
-              <Image
-                src="/paygo-logo.png" // make sure this file is in /public
+              {/* Make sure /public/paygo-logo.png exists. Add ?v=2 to bust caches if needed */}
+              <img
+                src="/paygo-logo.png?v=2"
                 alt="PayGo Logo"
-                width={70}
-                height={70}
+                className="h-14 w-14 object-contain"
+                draggable={false}
               />
             </div>
-            <h2 className="text-lg font-bold text-[#00C4A7] mb-2">Important Payment Notice</h2>
-            <p className="text-sm text-gray-700 mb-4">
+
+            <h2 className="mb-2 text-center text-lg font-extrabold text-[#1a237e]">
+              Important Payment Notice
+            </h2>
+
+            <p className="mb-5 text-center text-sm text-gray-700 leading-relaxed">
               Please <span className="font-bold text-red-500">DO NOT</span> make your Pay ID payment using{" "}
-              <span className="text-[#1a237e] font-bold">Opay Bank</span>.  
-              Payments from Opay may be delayed or rejected.  
-              Use any other bank for a smooth transaction.
+              <span className="font-bold text-[#1a237e]">Opay Bank</span>. Payments from Opay may be delayed or
+              rejected. Use any other bank for a smooth transaction.
             </p>
+
             <button
-              onClick={() => setShowOpayWarning(false)}
-              className="w-full bg-[#00C4A7] text-white py-2 rounded hover:bg-[#00b39b] font-medium"
+              onClick={closeWarning}
+              className="w-full rounded-full bg-orange-400 py-2.5 text-center font-medium text-black hover:bg-orange-500 active:scale-[0.99] transition"
             >
               I Understand
             </button>
@@ -83,77 +101,29 @@ export default function PaymentPage() {
 
       {/* Main Content */}
       <div className="p-4">
-        <div className="flex items-center justify-between mb-6">
-          <div className="w-12 h-12 bg-[#1a237e] rounded-full flex items-center justify-center">
-            <div className="relative w-6 h-6">
+        <div className="mb-6 flex items-center justify-between">
+          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#1a237e]">
+            <div className="relative h-6 w-6">
               <div className="absolute inset-0 rounded-full border-2 border-orange-400"></div>
-              <div className="absolute inset-1 rounded-full border-2 border-yellow-400 transform rotate-45"></div>
+              <div className="absolute inset-1 rotate-45 rounded-full border-2 border-yellow-400"></div>
             </div>
           </div>
           <div className="text-right">
             <div className="text-lg font-bold">NGN 7,250</div>
-            <div className="text-gray-600 text-sm">{formData.email}</div>
+            <div className="text-sm text-gray-600">{formData.email}</div>
           </div>
         </div>
 
-        <p className="text-center text-base mb-4">Complete this bank transfer to proceed</p>
+        <p className="mb-4 text-center text-base">Complete this bank transfer to proceed</p>
 
-        <div className="border border-gray-300 rounded-md overflow-hidden mb-4">
-          <div className="bg-gray-100 p-3 space-y-4">
+        <div className="mb-4 overflow-hidden rounded-md border border-gray-300">
+          <div className="space-y-4 bg-gray-100 p-3">
             <div>
-              <p className="text-gray-700 mb-1 text-sm">Amount</p>
+              <p className="mb-1 text-sm text-gray-700">Amount</p>
               <div className="flex items-center justify-between">
                 <p className="font-bold">NGN 7,250</p>
-                <button onClick={handleCopyAmount} className="bg-orange-400 text-white px-3 py-1 rounded text-sm">
-                  {copiedAmount ? "Copied" : "Copy"}
-                </button>
-              </div>
-            </div>
-
-            <div>
-              <p className="text-gray-700 mb-1 text-sm flex items-center gap-1">
-                <span>🔢</span> Account Number
-              </p>
-              <div className="flex items-center justify-between">
-                <p className="font-bold">6936296932</p>
                 <button
-                  onClick={handleCopyAccountNumber}
-                  className="bg-orange-400 text-white px-3 py-1 rounded text-sm"
+                  onClick={handleCopyAmount}
+                  className="rounded bg-orange-400 px-3 py-1 text-sm text-white hover:bg-orange-500"
                 >
-                  {copiedAccount ? "Copied" : "Copy"}
-                </button>
-              </div>
-            </div>
-
-            <div>
-              <p className="text-gray-700 mb-1 text-sm flex items-center gap-1">
-                <span>🏦</span> Bank Name
-              </p>
-              <p className="font-bold">Moniepoint</p>
-            </div>
-
-            <div>
-              <p className="text-gray-700 mb-1 text-sm flex items-center gap-1">
-                <span>🚹</span> Account Name
-              </p>
-              <p className="font-bold">PayGo-jude Samuel</p>
-            </div>
-          </div>
-
-          <div className="p-3 border-t border-gray-300">
-            <p className="mb-3 text-sm">
-              Kindly proceed with the payment for your PAY ID. Complete the bank transfer to receive your PAY ID.
-            </p>
-
-            <button
-              onClick={handleConfirmPayment}
-              className="w-full bg-orange-400 hover:bg-orange-500 text-black py-2.5 font-medium text-sm"
-            >
-              I have made this bank Transfer
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-}
+                  {copiedAmount ?
