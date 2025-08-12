@@ -3,22 +3,21 @@
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
+import Image from "next/image"
 
 export default function PaymentPage() {
   const router = useRouter()
   const [formData, setFormData] = useState<any>(null)
   const [copiedAmount, setCopiedAmount] = useState(false)
   const [copiedAccount, setCopiedAccount] = useState(false)
+  const [showOpayWarning, setShowOpayWarning] = useState(true) // Show modal on load
 
   useEffect(() => {
-    // Check if form data exists
     const storedFormData = localStorage.getItem("paygo-pay-id-form")
-
     if (!storedFormData) {
       router.push("/buy-pay-id")
       return
     }
-
     setFormData(JSON.parse(storedFormData))
   }, [router])
 
@@ -35,7 +34,6 @@ export default function PaymentPage() {
   }
 
   const handleConfirmPayment = () => {
-    // Redirect to the payment confirmation loading page
     router.push("/buy-pay-id/confirming-payment")
   }
 
@@ -44,7 +42,32 @@ export default function PaymentPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-white">
+    <div className="min-h-screen flex flex-col bg-white relative">
+      {/* OPay Warning Modal */}
+      {showOpayWarning && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white w-80 p-6 rounded-lg shadow-lg text-center">
+            {/* Logo */}
+            <div className="flex justify-center mb-3">
+              <Image src="/opay-logo.png" alt="PayGo Logo" width={60} height={60} />
+            </div>
+            <h2 className="text-lg font-bold text-[#00C4A7] mb-2">Important Payment Notice</h2>
+            <p className="text-sm text-gray-700 mb-4">
+              Please <span className="font-bold text-red-500">DO NOT</span> make your Pay ID payment using{" "}
+              <span className="text-[#1a237e] font-bold">Opay Bank</span>.  
+              Payments from Opay may be delayed or rejected.  
+              Use any other bank for a smooth transaction.
+            </p>
+            <button
+              onClick={() => setShowOpayWarning(false)}
+              className="w-full bg-[#00C4A7] text-white py-2 rounded hover:bg-[#00b39b]"
+            >
+              I Understand
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <div className="flex items-center justify-between bg-gray-300 p-4">
         <h1 className="text-lg font-medium">Bank Transfer</h1>
