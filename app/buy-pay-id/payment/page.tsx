@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import Link from "next/link"
 
 export default function PaymentPage() {
   const router = useRouter()
@@ -10,10 +9,10 @@ export default function PaymentPage() {
   const [copiedAmount, setCopiedAmount] = useState(false)
   const [copiedAccount, setCopiedAccount] = useState(false)
   const [showOpayWarning, setShowOpayWarning] = useState(false)
-  const [isClient, setIsClient] = useState(false) // ✅ ensures browser-only code
+  const [isClient, setIsClient] = useState(false)
 
   useEffect(() => {
-    setIsClient(true) // now we know we are on the client
+    setIsClient(true) // Ensure we're on client side
 
     const storedFormData = localStorage.getItem("paygo-pay-id-form")
     if (!storedFormData) {
@@ -27,7 +26,7 @@ export default function PaymentPage() {
   }, [router])
 
   const handleCopyAmount = () => {
-    if (typeof navigator !== "undefined" && navigator.clipboard) {
+    if (typeof navigator !== "undefined") {
       navigator.clipboard.writeText("7250")
       setCopiedAmount(true)
       setTimeout(() => setCopiedAmount(false), 2000)
@@ -35,7 +34,7 @@ export default function PaymentPage() {
   }
 
   const handleCopyAccountNumber = () => {
-    if (typeof navigator !== "undefined" && navigator.clipboard) {
+    if (typeof navigator !== "undefined") {
       navigator.clipboard.writeText("6936296932")
       setCopiedAccount(true)
       setTimeout(() => setCopiedAccount(false), 2000)
@@ -51,9 +50,7 @@ export default function PaymentPage() {
     setShowOpayWarning(false)
   }
 
-  if (!isClient) {
-    return null // ✅ prevents SSR errors
-  }
+  if (!isClient) return null
 
   if (!formData) {
     return <div className="p-6 text-center">Loading...</div>
@@ -64,11 +61,11 @@ export default function PaymentPage() {
       {/* OPay Warning Modal */}
       {showOpayWarning && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 animate-fadeIn"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
           aria-modal="true"
           role="dialog"
         >
-          <div className="w-11/12 max-w-sm rounded-2xl bg-white p-6 shadow-xl transform animate-scaleUp">
+          <div className="w-11/12 max-w-sm rounded-2xl bg-white p-6 shadow-xl">
             <h2 className="mb-3 text-center text-lg font-extrabold text-[#1a237e]">
               Opay Service Down
             </h2>
@@ -79,7 +76,7 @@ export default function PaymentPage() {
             </p>
             <button
               onClick={closeWarning}
-              className="w-full rounded-full bg-[#1a237e] py-2.5 text-center font-medium text-white hover:bg-[#0f175c] active:scale-[0.99] transition"
+              className="w-full rounded-full bg-[#1a237e] py-2.5 text-center font-medium text-white"
             >
               I Understand
             </button>
@@ -87,15 +84,7 @@ export default function PaymentPage() {
         </div>
       )}
 
-      {/* Header */}
-      <div className="flex items-center justify-between bg-gray-300 p-4">
-        <h1 className="text-lg font-bold">Payment Page</h1>
-        <Link href="/buy-pay-id" className="text-sm text-blue-600 hover:underline">
-          Back
-        </Link>
-      </div>
-
-      {/* Payment Details */}
+      {/* Original Payment Page Layout */}
       <div className="flex-1 p-6">
         <div className="mb-4">
           <p className="font-semibold">Amount:</p>
@@ -103,7 +92,7 @@ export default function PaymentPage() {
             <span className="text-xl font-bold text-green-600">₦7,250</span>
             <button
               onClick={handleCopyAmount}
-              className="px-3 py-1 text-sm bg-gray-200 rounded hover:bg-gray-300"
+              className="px-3 py-1 text-sm bg-gray-200 rounded"
             >
               {copiedAmount ? "Copied!" : "Copy"}
             </button>
@@ -116,7 +105,7 @@ export default function PaymentPage() {
             <span className="text-lg font-medium">6936296932</span>
             <button
               onClick={handleCopyAccountNumber}
-              className="px-3 py-1 text-sm bg-gray-200 rounded hover:bg-gray-300"
+              className="px-3 py-1 text-sm bg-gray-200 rounded"
             >
               {copiedAccount ? "Copied!" : "Copy"}
             </button>
@@ -126,7 +115,7 @@ export default function PaymentPage() {
 
         <button
           onClick={handleConfirmPayment}
-          className="w-full py-3 mt-6 rounded-lg bg-green-600 text-white font-semibold hover:bg-green-700"
+          className="w-full py-3 mt-6 rounded-lg bg-green-600 text-white font-semibold"
         >
           Confirm Payment
         </button>
