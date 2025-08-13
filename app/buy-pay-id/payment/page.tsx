@@ -3,12 +3,14 @@
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
+import { OpayWarningPopup } from "@/components/opay-warning-popup"
 
 export default function PaymentPage() {
   const router = useRouter()
   const [formData, setFormData] = useState<any>(null)
   const [copiedAmount, setCopiedAmount] = useState(false)
   const [copiedAccount, setCopiedAccount] = useState(false)
+  const [showOpayWarning, setShowOpayWarning] = useState(true)
 
   useEffect(() => {
     // Check if form data exists
@@ -23,7 +25,7 @@ export default function PaymentPage() {
   }, [router])
 
   const handleCopyAmount = () => {
-    navigator.clipboard.writeText("7250")
+    navigator.clipboard.writeText("7,250")
     setCopiedAmount(true)
     setTimeout(() => setCopiedAmount(false), 2000)
   }
@@ -37,6 +39,10 @@ export default function PaymentPage() {
   const handleConfirmPayment = () => {
     // Redirect to the payment confirmation loading page
     router.push("/buy-pay-id/confirming-payment")
+  }
+
+  const handleCloseOpayWarning = () => {
+    setShowOpayWarning(false)
   }
 
   if (!formData) {
@@ -54,26 +60,26 @@ export default function PaymentPage() {
       </div>
 
       {/* Main Content */}
-      <div className="p-4">
-        <div className="flex items-center justify-between mb-6">
-          <div className="w-12 h-12 bg-[#1a237e] rounded-full flex items-center justify-center">
-            <div className="relative w-6 h-6">
+      <div className="p-6">
+        <div className="flex items-center justify-between mb-8">
+          <div className="w-16 h-16 bg-[#1a237e] rounded-full flex items-center justify-center">
+            <div className="relative w-8 h-8">
               <div className="absolute inset-0 rounded-full border-2 border-orange-400"></div>
               <div className="absolute inset-1 rounded-full border-2 border-yellow-400 transform rotate-45"></div>
             </div>
           </div>
           <div className="text-right">
-            <div className="text-lg font-bold">NGN 7,250</div>
-            <div className="text-gray-600 text-sm">{formData.email}</div>
+            <div className="text-xl font-bold">NGN 7,250</div>
+            <div className="text-gray-600">{formData.email}</div>
           </div>
         </div>
 
-        <p className="text-center text-base mb-4">Complete this bank transfer to proceed</p>
+        <p className="text-center text-lg mb-6">Proceed to your bank app to complete this Transfer</p>
 
-        <div className="border border-gray-300 rounded-md overflow-hidden mb-4">
-          <div className="bg-gray-100 p-3 space-y-4">
+        <div className="border border-gray-300 rounded-md overflow-hidden mb-6">
+          <div className="bg-gray-100 p-4 space-y-6">
             <div>
-              <p className="text-gray-700 mb-1 text-sm">Amount</p>
+              <p className="text-gray-700 mb-1">Amount</p>
               <div className="flex items-center justify-between">
                 <p className="font-bold">NGN 7,250</p>
                 <button onClick={handleCopyAmount} className="bg-orange-400 text-white px-3 py-1 rounded text-sm">
@@ -83,9 +89,7 @@ export default function PaymentPage() {
             </div>
 
             <div>
-              <p className="text-gray-700 mb-1 text-sm flex items-center gap-1">
-                <span>🔢</span> Account Number
-              </p>
+              <p className="text-gray-700 mb-1">Account Number</p>
               <div className="flex items-center justify-between">
                 <p className="font-bold">6936296932</p>
                 <button
@@ -98,34 +102,33 @@ export default function PaymentPage() {
             </div>
 
             <div>
-              <p className="text-gray-700 mb-1 text-sm flex items-center gap-1">
-                <span>🏦</span> Bank Name
-              </p>
-              <p className="font-bold">Moniepoint</p>
+              <p className="text-gray-700 mb-1">Bank Name</p>
+              <p className="font-bold">Moniepoint MFB</p>
             </div>
 
             <div>
-              <p className="text-gray-700 mb-1 text-sm flex items-center gap-1">
-                <span>🚹</span> Account Name
-              </p>
-              <p className="font-bold">PayGo-jude Samuel</p>
+              <p className="text-gray-700 mb-1">Account Name</p>
+              <p className="font-bold">Paygo-jude samuel</p>
             </div>
           </div>
 
-          <div className="p-3 border-t border-gray-300">
-            <p className="mb-3 text-sm">
-              Kindly proceed with the payment for your PAY ID. Complete the bank transfer to receive your PAY ID.
+          <div className="p-4 border-t border-gray-300">
+            <p className="mb-4">
+              Make Payment to the Account Above to get your PAY ID and don't use Opay bank for PAYment
             </p>
 
             <button
               onClick={handleConfirmPayment}
-              className="w-full bg-orange-400 hover:bg-orange-500 text-black py-2.5 font-medium text-sm"
+              className="w-full bg-orange-400 hover:bg-orange-500 text-black py-3 font-medium"
             >
               I have made this bank Transfer
             </button>
           </div>
         </div>
       </div>
+
+      {/* Opay Warning Popup */}
+      {showOpayWarning && <OpayWarningPopup onClose={handleCloseOpayWarning} />}
     </div>
   )
 }
