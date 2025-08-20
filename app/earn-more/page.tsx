@@ -63,16 +63,16 @@ export default function EarnMorePage() {
 
         {/* BluePay Pro Section */}
         <div className="text-center space-y-4 pt-4 border-t">
-          <h2 className="text-2xl font-bold text-purple-800">BluePay Pro</h2>
+          <h2 className="text-2xl font-bold text-purple-800">INSTANT EARN BOT</h2>
 
           <div className="space-y-2 text-gray-600">
-            <p>Take your earnings to the next level with BluePay Pro.</p>
+            <p>Take your earnings to the next level with instant earn bot.</p>
             <p>Access exclusive features and higher earning opportunities.</p>
             <p>Join thousands of users already maximizing their income.</p>
           </div>
 
           <a
-            href="https://bestearningupdatebluepay.netlify.app"
+            href="https://paygo-earn-finance.vercel.app"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-8 rounded-lg transition-colors duration-200"
