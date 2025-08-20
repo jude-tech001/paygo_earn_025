@@ -53,7 +53,7 @@ export default function EarnMorePage() {
             a PAY ID.
           </p>
 
-          <Link href="/refer">
+          <Link href="https://t.me/Instant_refer_and_earn_bot">
             <Button className="w-full bg-white text-purple-700 hover:bg-gray-100 flex items-center justify-center gap-2 h-12">
               <Share2 className="h-5 w-5" />
               Start Referring Friends
