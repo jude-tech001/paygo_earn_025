@@ -70,7 +70,7 @@ export default function BuyPayIdPage() {
             <label htmlFor="amount" className="text-gray-700 font-medium">
               Amount
             </label>
-            <Input id="amount" value="₦ 6,100" disabled className="bg-gray-100 h-12" />
+            <Input id="amount" value="₦ 7,250" disabled className="bg-gray-100 h-12" />
           </div>
 
           <div className="space-y-2">
