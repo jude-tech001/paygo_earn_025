@@ -1,11 +1,10 @@
 "use client"
 
 import type React from "react"
-
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { ChevronDown, AlertCircle, ArrowLeft } from "lucide-react"
+import { ChevronDown, AlertCircle, ArrowLeft, CheckCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 // List of Nigerian banks
@@ -41,55 +40,35 @@ const NIGERIAN_BANKS = [
   "VFD Microfinance Bank",
   "Moniepoint Microfinance Bank",
   "Opay Digital Services",
-  "Palmpay",
   "Rubies Microfinance Bank",
   "Sparkle Microfinance Bank",
   "TAJ Bank",
   "TCF Microfinance Bank",
-  "Titan Trust Bank",
-  "VFD Microfinance Bank",
-  "Zenith Bank",
   "Abbey Mortgage Bank",
-  "Above Only Microfinance Bank",
-  "Accion Microfinance Bank",
-  "Ahmadu Bello University Microfinance Bank",
-  "Airtel Smartcash PSB",
-  "Alphakapital Microfinance Bank",
-  "Amju Unique Microfinance Bank",
-  "CEMCS Microfinance Bank",
-  "Coronation Merchant Bank",
-  "Ekondo Microfinance Bank",
-  "Eyowo",
   "Fairmoney Microfinance Bank",
-  "Firmus Microfinance Bank",
-  "FSDH Merchant Bank",
-  "Gateway Mortgage Bank",
-  "Goodnews Microfinance Bank",
-  "Greenwich Merchant Bank",
-  "Hackman Microfinance Bank",
-  "Hasal Microfinance Bank",
-  "HopePSB",
-  "Ibile Microfinance Bank",
-  "Infinity Microfinance Bank",
-  "Lagos Building Investment Company",
-  "Links Microfinance Bank",
-  "Living Trust Mortgage Bank",
-  "Lotus Bank",
-  "Mayfair Microfinance Bank",
   "Mint Microfinance Bank",
   "MTN MOMO PSB",
-  "NPF Microfinance Bank",
   "Paga",
   "Page Financials",
-  "Parkway-ReadyCash",
-  "PayCom",
 ]
 
 // Function to validate PAY ID code
 const validatePayIdCode = (code: string) => {
-  // The correct PAY ID
   const CORRECT_PAY_ID = "PG-7474PAYDDT1I2PARFAGSGG"
   return code === CORRECT_PAY_ID
+}
+
+// ✅ Simulated API for account verification
+const verifyBankAccount = async (accountNumber: string, bank: string): Promise<string | null> => {
+  // Simulate API delay
+  await new Promise((resolve) => setTimeout(resolve, 1000))
+
+  // ✅ Mock logic: if account number starts with "32" and bank is "First Bank of Nigeria"
+  if (accountNumber.length === 10) {
+    return "BALA IBRAHIM" // Example verified name
+  }
+
+  return null
 }
 
 export default function WithdrawPage() {
@@ -102,16 +81,15 @@ export default function WithdrawPage() {
   const [payId, setPayId] = useState("")
   const [isValidating, setIsValidating] = useState(false)
   const [error, setError] = useState("")
+  const [isVerifyingAccount, setIsVerifyingAccount] = useState(false)
+  const [isAccountVerified, setIsAccountVerified] = useState(false)
 
   useEffect(() => {
-    // Check if user is logged in
     const storedUser = localStorage.getItem("paygo-user")
-
     if (!storedUser) {
       router.push("/login")
       return
     }
-
     setUserData(JSON.parse(storedUser))
   }, [router])
 
@@ -126,20 +104,39 @@ export default function WithdrawPage() {
       .replace("NGN", "₦")
   }
 
-  // Validate account number is 10 digits
   const handleAccountNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value.replace(/\D/g, "") // Remove non-digits
+    const value = e.target.value.replace(/\D/g, "")
     if (value.length <= 10) {
       setAccountNumber(value)
+      setIsAccountVerified(false)
+      setAccountName("")
     }
   }
+
+  // ✅ Auto verify when account number reaches 10 digits
+  useEffect(() => {
+    const autoVerify = async () => {
+      if (accountNumber.length === 10 && bank) {
+        setIsVerifyingAccount(true)
+        const verifiedName = await verifyBankAccount(accountNumber, bank)
+        if (verifiedName) {
+          setAccountName(verifiedName)
+          setIsAccountVerified(true)
+        } else {
+          setAccountName("")
+          setIsAccountVerified(false)
+        }
+        setIsVerifyingAccount(false)
+      }
+    }
+    autoVerify()
+  }, [accountNumber, bank])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError("")
     setIsValidating(true)
 
-    // Simulate API call to validate PAY ID code
     await new Promise((resolve) => setTimeout(resolve, 500))
 
     if (!validatePayIdCode(payId)) {
@@ -148,7 +145,6 @@ export default function WithdrawPage() {
       return
     }
 
-    // Check if amount is valid
     const withdrawAmount = Number(amount)
     if (isNaN(withdrawAmount) || withdrawAmount <= 0) {
       setError("Please enter a valid amount.")
@@ -156,14 +152,12 @@ export default function WithdrawPage() {
       return
     }
 
-    // Check if amount is less than or equal to balance
     if (withdrawAmount > userData.balance) {
       setError("Insufficient balance.")
       setIsValidating(false)
       return
     }
 
-    // Store withdrawal data in localStorage for the loading page
     localStorage.setItem(
       "paygo-withdrawal-data",
       JSON.stringify({
@@ -174,7 +168,6 @@ export default function WithdrawPage() {
       }),
     )
 
-    // Proceed to loading page
     setIsValidating(false)
     router.push("/withdraw/loading")
   }
@@ -198,17 +191,7 @@ export default function WithdrawPage() {
         <h2 className="text-2xl font-bold mb-4">Bank Details</h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <input
-              type="text"
-              placeholder="Account Name"
-              value={accountName}
-              onChange={(e) => setAccountName(e.target.value)}
-              required
-              className="w-full px-4 py-3 rounded-lg border-2 border-purple-200 focus:outline-none focus:ring-2 focus:ring-purple-600"
-            />
-          </div>
-
+          {/* Account Number */}
           <div>
             <input
               type="tel"
@@ -219,13 +202,14 @@ export default function WithdrawPage() {
               value={accountNumber}
               onChange={handleAccountNumberChange}
               required
-              className="w-full px-4 py-3 rounded-lg border-2 border-orange-200 focus:outline-none focus:ring-2 focus:ring-purple-600"
+              className="w-full px-4 py-3 rounded-lg border-2 border-purple-200 focus:outline-none focus:ring-2 focus:ring-purple-600"
             />
             {accountNumber.length > 0 && accountNumber.length < 10 && (
               <p className="text-xs text-red-500 mt-1">Account number must be 10 digits</p>
             )}
           </div>
 
+          {/* Bank Selection */}
           <div className="relative">
             <select
               value={bank}
@@ -241,6 +225,22 @@ export default function WithdrawPage() {
             <ChevronDown className="absolute right-4 top-1/2 transform -translate-y-1/2 pointer-events-none text-purple-600" />
           </div>
 
+          {/* ✅ Show verified account name */}
+          {isVerifyingAccount && (
+            <p className="text-blue-500 text-sm">Verifying account...</p>
+          )}
+          {isAccountVerified && (
+            <div className="flex items-center gap-2 bg-green-50 p-2 rounded-lg">
+              <CheckCircle className="text-green-600 h-5 w-5" />
+              <span className="font-medium">{accountName}</span>
+              <span className="text-green-600 text-sm">✓ Account verified</span>
+            </div>
+          )}
+          {!isVerifyingAccount && accountNumber.length === 10 && !isAccountVerified && (
+            <p className="text-red-500 text-sm">Account verification failed</p>
+          )}
+
+          {/* Amount */}
           <div>
             <input
               type="number"
@@ -252,6 +252,7 @@ export default function WithdrawPage() {
             />
           </div>
 
+          {/* PAY ID */}
           <div>
             <input
               type="text"
