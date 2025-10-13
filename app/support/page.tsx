@@ -25,14 +25,10 @@ export default function SupportPage() {
     setUserData(JSON.parse(storedUser))
   }, [router])
 
-  const handleWhatsAppSupport = () => {
-    // Create WhatsApp URL with phone number and pre-filled message
-    const phoneNumber = "19036318126" // Remove the + as it's added in the URL format
-    const message = encodeURIComponent("hello i contacted for help from Paygo app")
-    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${message}`
-
-    // Open WhatsApp in a new tab
-    window.open(whatsappUrl, "_blank")
+  const handleTelegramSupport = () => {
+    // Open Telegram support link in a new tab
+    const telegramUrl = "https://t.me/paygo_support001"
+    window.open(telegramUrl, "_blank")
   }
 
   const handleLiveChat = () => {
@@ -83,22 +79,22 @@ export default function SupportPage() {
           </CardContent>
         </Card>
 
-        {/* WhatsApp Support Card */}
+        {/* Telegram Support Card */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <MessageSquare className="h-5 w-5 text-purple-600" />
-              WhatsApp Support
+              Telegram Support
             </CardTitle>
-            <CardDescription>Chat with our support team on WhatsApp for quick assistance</CardDescription>
+            <CardDescription>Chat with our support team on Telegram for quick assistance</CardDescription>
           </CardHeader>
           <CardContent>
             <Button
-              onClick={handleWhatsAppSupport}
-              className="w-full bg-green-600 hover:bg-green-700 flex items-center gap-2"
+              onClick={handleTelegramSupport}
+              className="w-full bg-blue-600 hover:bg-blue-700 flex items-center gap-2"
             >
               <MessageSquare className="h-5 w-5" />
-              Chat on WhatsApp
+              Chat on Telegram
             </Button>
             <p className="text-sm text-gray-500 mt-2">
               Our support team is available 24/7 to assist you with any issues or questions.
@@ -107,7 +103,6 @@ export default function SupportPage() {
         </Card>
 
         <div className="text-center text-sm text-gray-500 mt-6">
-          {" "}
           Financial Services
           <br />
           PayGo © 2023. All rights reserved.
