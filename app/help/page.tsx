@@ -35,13 +35,9 @@ const faqs = [
 
 export default function HelpPage() {
   const handleContactSupport = () => {
-    // Create WhatsApp URL with phone number and pre-filled message
-    const phoneNumber = "19036318126" // Remove the + as it's added in the URL format
-    const message = encodeURIComponent("Hello, I need help with PayGo app.")
-    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${message}`
-
-    // Open WhatsApp in a new tab
-    window.open(whatsappUrl, "_blank")
+    // Open Telegram support link in a new tab
+    const telegramUrl = "https://t.me/paygo_support001"
+    window.open(telegramUrl, "_blank")
   }
 
   return (
@@ -75,7 +71,7 @@ export default function HelpPage() {
 
         <div className="text-center mt-8">
           <p className="text-gray-600 mb-4">Still need help?</p>
-          <Button onClick={handleContactSupport} className="bg-green-600 hover:bg-green-700 text-white">
+          <Button onClick={handleContactSupport} className="bg-blue-600 hover:bg-blue-700 text-white">
             Contact our support team
           </Button>
         </div>
